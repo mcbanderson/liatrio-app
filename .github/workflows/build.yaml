@@ -82,7 +82,7 @@ jobs:
       - name: Tag and push image to Amazon ECR
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: flask-app
+          ECR_REPOSITORY: liatrio-app
           IMAGE_ID: ${{ needs.build.outputs.imageid }}
           VERSION: ${{ needs.release.outputs.version }}
         run: |
