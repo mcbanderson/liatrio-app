@@ -1,0 +1,87 @@
+name: Build
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - dev/*
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      imageid: ${{ steps.docker-build.outputs.imageid }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Docker Build
+        id: docker-build
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile
+          outputs: type=docker,dest=/tmp/${{ github.sha }}.tar
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ github.sha }}.tar
+          path: /tmp/${{ github.sha }}.tar
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.semantic-release.outputs.version }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up node
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16.x"
+      - name: Install dependencies
+        run: |
+          npm install @semantic-release/commit-analyzer \
+                      @semantic-release/release-notes-generator \
+                      @semantic-release/github \
+                      @semantic-release/exec \
+                      semantic-release
+      - name: Create release
+        id: semantic-release
+        run: |
+          npx semantic-release -e ./.github/.releaserc.json
+          echo ::set-output name=version::$(cat version.txt)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  push:
+    needs:
+      - build
+      - release
+    runs-on: ubuntu-latest
+    if: needs.release.outputs.version
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::976809625379:role/gha_oidc_role_github-actions-oidc
+          aws-region: us-east-1
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ github.sha }}.tar
+          path: /tmp
+      - name: Load Docker image
+        run: |
+          docker load --input /tmp/${{ github.sha }}.tar
+      - name: Tag and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: flask-app
+          IMAGE_ID: ${{ needs.build.outputs.imageid }}
+          VERSION: ${{ needs.release.outputs.version }}
+        run: |
+          docker tag $IMAGE_ID $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION
