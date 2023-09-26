@@ -11,7 +11,6 @@ RUN pip install -r requirements.txt
 # Copy app contents to the image
 COPY app/ /app
 
-ENTRYPOINT [ "python" ]
+EXPOSE 5000
 
-CMD ["app.py" ]
-
+CMD [ "python", "-m" , "flask", "run", "--host=0.0.0.0"]
