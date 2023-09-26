@@ -25,6 +25,18 @@ A simple Flask app for the Liatrio interview project.
 
 4. Navigate to http://localhost in your browser
 
+## Deploying to Kubernetes
+1. Clone the repo
+`git clone https://github.com/mcbanderson/liatrio-app.git`
+
+2. Push built image to ECR
+
+3. Set kubecontext
+`aws eks --region us-east-1 update-kubeconfig --name app-test-eks-cluster`
+
+4. Deploy with Helm
+`helm upgrade --install --values helm/values.yaml --set image.tag=<version> liatrio-app-release-1 ./helm`
+
 ## Development
 ### Conventional Commits
 This project uses [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for commit messages. This allows for automated versioning and changelog generation. The following commit types are used:
