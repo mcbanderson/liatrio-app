@@ -1,0 +1,31 @@
+name: Deploy
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to deploy'
+        required: true
+        default: '1.0.1'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v2
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::976809625379:role/gha_oidc_role_github-actions-oidc
+          aws-region: us-east-1
+      - name: Configure kubecontext
+        run: |
+          aws eks --region us-east-1 update-kubeconfig --name app-test-eks-cluster
+      - name: Deploy to Kubernetes
+        run: |
+          helm upgrade --install --values helm/values.yaml --set image.tag=${{ github.event.inputs.version }} liatrio-app-release-1 ./helm
+      - name: Get service URL
+        run: |
+          echo "Service URL: http://$(kubectl get svc liatrio-app-release-1 -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')"

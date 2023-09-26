@@ -88,3 +88,8 @@ jobs:
         run: |
           docker tag $IMAGE_ID $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION
+      - name: Trigger deployment
+        run: |
+          gh workflow run deploy.yaml -f version=${{ needs.release.outputs.version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
