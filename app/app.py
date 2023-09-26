@@ -10,7 +10,7 @@ def hello_world():
 
 @app.route("/about")
 def about_me():
-    return "<p>About me.</p>"
+    return "<p>About me!</p>"
 
 
 if __name__ == "__main__":
