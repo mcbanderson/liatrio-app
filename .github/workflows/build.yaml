@@ -92,4 +92,4 @@ jobs:
         run: |
           gh workflow run deploy.yaml -f version=${{ needs.release.outputs.version }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
