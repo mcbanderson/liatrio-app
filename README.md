@@ -54,3 +54,16 @@ This project uses [Conventional Commits](https://www.conventionalcommits.org/en/
 ### Versioning
 This project uses [Semantic Versioning](https://semver.org/) for versioning. The version is automatically incremented based on the commit type via [semantic-release](https://github.com/semantic-release/semantic-release).
 
+### Testing
+
+#### Unit Tests
+To run unit tests, run `python -m unittest discover -v test/unit` from the root directory.
+
+To check code coverage, run `coverage run -m unittest discover -v test/unit` from the root directory, then `coverage report` to see the report.
+
+#### Smoke Tests
+To run smoke tests, run `python test/smoke/test_app.py` from the root directory.
+
+[!NOTE]
+The smoke tests do not currently use any testing framework, so no report is generated. When the tests run
+successfully, there will be no output. If there is an error, the error will be printed to the console.
