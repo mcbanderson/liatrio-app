@@ -1,4 +1,4 @@
-name: Unit Test
+name: Smoke Test
 on:
   workflow_dispatch:
     inputs:
