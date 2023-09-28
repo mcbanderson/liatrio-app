@@ -28,4 +28,10 @@ jobs:
           helm upgrade --install --values helm/values.yaml --set image.tag=${{ github.event.inputs.version }} liatrio-app-release-1 ./helm
       - name: Get service URL
         run: |
-          echo "Service URL: http://$(kubectl get svc liatrio-app-release-1 -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')"
+          echo "endpoint_url=http://$(kubectl get svc liatrio-app-release-1 -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')" >> $GITHUB_ENV
+          echo "Service URL: $endpoint_url"
+      - name: Trigger smoke tests
+        run: |
+          gh workflow run smoke_test.yaml -f endpoint=$endpoint_url
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
