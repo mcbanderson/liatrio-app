@@ -1,11 +1,5 @@
 name: Unit Test
-on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: "The version to be tested"
-        required: true
-        type: string
+on: pull_request
 
 jobs:
   unit_test:
