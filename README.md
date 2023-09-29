@@ -62,7 +62,7 @@ To run unit tests, run `python -m unittest discover -v test/unit` from the root 
 To check code coverage, run `coverage run -m unittest discover -v test/unit` from the root directory, then `coverage report` to see the report.
 
 #### Smoke Tests
-To run smoke tests, run `python test/smoke/test_app.py` from the root directory.
+To run smoke tests, run `python test/smoke/test_app.py <ENDPOINT_URL>` from the root directory.
 
 > [!NOTE]
 > The smoke tests do not currently use any testing framework, so no report is generated. When the tests run
