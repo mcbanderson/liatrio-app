@@ -18,5 +18,10 @@ def contact_me():
     return "<p>Contact me.</p>"
 
 
+@app.route("/ralph")
+def ralph():
+    return "<p>Hi Ralph!</p>"
+
+
 if __name__ == "__main__":
     app.run()
