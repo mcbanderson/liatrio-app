@@ -15,7 +15,7 @@ def about_me():
 
 @app.route("/contact")
 def contact_me():
-    return "<p>Contact me!</p>"
+    return "<p>Contact me.</p>"
 
 
 if __name__ == "__main__":
