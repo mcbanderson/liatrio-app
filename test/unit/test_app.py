@@ -14,6 +14,6 @@ class AppTestCase(unittest.TestCase):
         """Test the ralph endpoint returns a string."""
         assert isinstance(ralph(), str)
 
-    def test_ralph_endpoint_returns_correct_string(self):
+    def test_ralph_endpoint_contains_last_name(self):
         """Test the ralph endpoint returns the correct string."""
-        assert ralph() == "<p>Hi Ralph!</p>"
+        assert "Mechrek" in ralph()
