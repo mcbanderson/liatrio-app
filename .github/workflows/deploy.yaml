@@ -29,7 +29,7 @@ jobs:
       - name: Get service URL
         run: |
           echo "endpoint_url=http://$(kubectl get svc liatrio-app-release-1 -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')" >> $GITHUB_ENV
-          echo "Service URL: $endpoint_url"
+          echo "Service URL: http://$(kubectl get svc liatrio-app-release-1 -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')"
       - name: Trigger smoke tests
         run: |
           gh workflow run smoke_test.yaml -f endpoint=$endpoint_url
